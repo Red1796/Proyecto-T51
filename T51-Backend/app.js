@@ -61,12 +61,10 @@ app.post("/api/register", async (req, res) => {
   const { nombre, correo, contraseña } = req.body;
 
   if (!nombre || !correo || !contraseña) {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: "nombre, correo y contraseña son requeridos...",
-      });
+    return res.status(400).json({
+      status: 400,
+      message: "nombre, correo y contraseña son requeridos...",
+    });
   }
 
   const saltRound = 10;
@@ -205,21 +203,17 @@ app.post("/api/venta", authMiddleware, (req, res) => {
 
       pool.query(sqlDetalles, [detalles], (err2) => {
         if (err2) {
-          return res
-            .status(500)
-            .json({
-              status: 500,
-              message: "Error al guardar detalles de venta...",
-            });
+          return res.status(500).json({
+            status: 500,
+            message: "Error al guardar detalles de venta...",
+          });
         }
 
-        res
-          .status(201)
-          .json({
-            status: 201,
-            message: "Venta registrada exitosamente...",
-            data: { id_venta },
-          });
+        res.status(201).json({
+          status: 201,
+          message: "Venta registrada exitosamente...",
+          data: { id_venta },
+        });
       });
     }
   );
@@ -245,12 +239,10 @@ app.get("/api/factura/:id", authMiddleware, (req, res) => {
 
     pool.query(sqlDetalles, [id_venta], (err2, detalles) => {
       if (err2) {
-        return res
-          .status(500)
-          .json({
-            status: 500,
-            message: "Error al obtener detalles de venta...",
-          });
+        return res.status(500).json({
+          status: 500,
+          message: "Error al obtener detalles de venta...",
+        });
       }
 
       res.status(200).json({
