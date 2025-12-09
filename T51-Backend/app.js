@@ -4,9 +4,11 @@ const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
+const cors = require("cors");
 const SECRET_KEY = process.env.JWT_SECRET || "codigo_secreto_2026";
 
+app.use(cors());
 app.use(express.json());
 
 /*
@@ -88,9 +90,10 @@ app.post("/api/register", async (req, res) => {
 
 // Login
 app.post("/api/login", async (req, res) => {
-  const { correo, contraseña } = req.body;
+  const { username, correo, password } = req.body;
+  const userCorreo = correo || username;
 
-  if (!correo || !contraseña) {
+  if (!userCorreo || !password) {
     return res
       .status(400)
       .json({ status: 400, message: "correo y contraseña son requeridos..." });
@@ -98,26 +101,42 @@ app.post("/api/login", async (req, res) => {
 
   const sql = "SELECT * FROM Usuario WHERE correo = ?";
 
-  pool.query(sql, [correo], async (err, results) => {
+  pool.query(sql, [userCorreo], async (err, results) => {
     if (err) {
+      console.error("Error en query:", err);
       return res
         .status(500)
         .json({ status: 500, message: "Error en la consulta sql..." });
     }
 
     if (results.length === 0) {
+      console.log(`Usuario no encontrado: ${userCorreo}`);
       return res
         .status(401)
-        .json({ status: 401, message: "Credenciales inválidas..." });
+        .json({ status: 401, message: "Credenciales inválidas testing..." });
     }
 
     const usuario = results[0];
-    const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
+    console.log("Usuario encontrado:", usuario);
+
+    // Buscar el campo de contraseña (puede ser 'password' o 'contraseña')
+    const passwordField = usuario.password || usuario.contraseña;
+
+    if (!passwordField) {
+      console.error("No se encontró campo de contraseña");
+      return res.status(500).json({
+        status: 500,
+        message: "Error en la configuración del usuario...",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, passwordField);
 
     if (!isMatch) {
+      console.log("Contraseña no coincide");
       return res
         .status(401)
-        .json({ status: 401, message: "Credenciales inválidas..." });
+        .json({ status: 401, message: "Credenciales inválidas testing 2..." });
     }
 
     const token = jwt.sign(
@@ -126,7 +145,7 @@ app.post("/api/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ status: 200, message: "success", data: token });
+    res.status(200).json({ status: 200, message: "success", token: token });
   });
 });
 

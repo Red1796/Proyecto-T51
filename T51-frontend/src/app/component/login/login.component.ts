@@ -8,25 +8,22 @@ import { Router } from '@angular/router';
   selector: 'app-login',
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
   username: string = '';
   contrasenia: string = '';
   errorMessage: string = '';
 
-  constructor(private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   login() {
     const credentials = {
       username: this.username,
-      password: this.contrasenia
+      password: this.contrasenia,
     };
     this.errorMessage = '';
     this.authService.login(credentials).subscribe({
-      
       next: (response) => {
         console.log('Login exitoso:', response);
         localStorage.setItem('token', response.token);
@@ -34,15 +31,15 @@ export class LoginComponent {
       },
       error: (error) => {
         console.error('Error de login:', error);
-        
+
         // Detecta si viene un mensaje personalizado del backend
         if (error.status === 401) {
-          this.errorMessage = error.error?.message || 'Credenciales incorrectas.';
+          this.errorMessage =
+            error.error?.message || 'Credenciales incorrectas.';
         } else {
           this.errorMessage = 'Ocurrió un error inesperado. Intenta de nuevo.';
         }
-      }
-
+      },
     });
   }
 }
