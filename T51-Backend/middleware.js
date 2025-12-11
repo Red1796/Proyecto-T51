@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.JWT_SECRET || "codigo_secreto_2026";
 
-// Middleware de autenticación
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers["authorization"];
 

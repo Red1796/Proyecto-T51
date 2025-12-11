@@ -6,9 +6,8 @@ const { authMiddleware, SECRET_KEY } = require("./middleware");
 
 const router = express.Router();
 
-// ==================== RUTAS DE AUTENTICACIÓN ====================
+// AUTENTICACIÓN
 
-// Registro de usuario
 router.post("/register", async (req, res) => {
   const { nombre, correo, contraseña } = req.body;
 
@@ -38,7 +37,6 @@ router.post("/register", async (req, res) => {
   });
 });
 
-// Login
 router.post("/login", async (req, res) => {
   const { username, correo, password } = req.body;
   const userCorreo = correo || username;
@@ -69,7 +67,6 @@ router.post("/login", async (req, res) => {
     const usuario = results[0];
     console.log("Usuario encontrado:", usuario);
 
-    // Buscar el campo de contraseña (puede ser 'password' o 'contraseña')
     const passwordField = usuario.password || usuario.contraseña;
 
     if (!passwordField) {
@@ -99,9 +96,8 @@ router.post("/login", async (req, res) => {
   });
 });
 
-// ==================== RUTAS DE PRODUCTOS ====================
+// PRODUCTOS
 
-// Obtener todos los productos
 router.get("/productos", (req, res) => {
   const sql = "SELECT * FROM Producto";
 
@@ -116,9 +112,8 @@ router.get("/productos", (req, res) => {
   });
 });
 
-// ==================== RUTAS DE USUARIOS ====================
+// USUARIOS
 
-// Obtener todos los usuarios
 router.get("/usuarios", (req, res) => {
   const sql = "SELECT id, nombre, correo FROM Usuario";
 
@@ -134,9 +129,8 @@ router.get("/usuarios", (req, res) => {
   });
 });
 
-// ==================== RUTAS DE VENTAS ====================
+// VENTAS
 
-// Obtener todas las ventas
 router.get("/ventas", authMiddleware, (req, res) => {
   const sql = `
     SELECT v.*, u.nombre as usuario, c.nombre as cliente 
@@ -158,7 +152,6 @@ router.get("/ventas", authMiddleware, (req, res) => {
   });
 });
 
-// Crear venta
 router.post("/venta", authMiddleware, (req, res) => {
   const { id_cliente, productos } = req.body;
   const id_usuario = req.usuario.id;
@@ -215,9 +208,8 @@ router.post("/venta", authMiddleware, (req, res) => {
   );
 });
 
-// ==================== RUTAS DE FACTURAS ====================
+// FACTURAS
 
-// Ver factura
 router.get("/factura/:id", authMiddleware, (req, res) => {
   const id_venta = req.params.id;
 

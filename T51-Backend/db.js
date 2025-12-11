@@ -1,6 +1,5 @@
 const mysql = require("mysql2");
 
-// Crear pool de conexiones a la base de datos
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -8,7 +7,6 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-// Verificar la conexión
 pool.getConnection((error, conexion) => {
   if (error) {
     console.log("❌ Error de conexión a la base de datos...");
