@@ -112,6 +112,38 @@ router.get("/productos", (req, res) => {
   });
 });
 
+router.post("/productos", authMiddleware, (req, res) => {
+  const { nombre, descripcion, precio, stock } = req.body;
+
+  if (!nombre || !precio) {
+    return res.status(400).json({
+      status: 400,
+      message: "nombre y precio son requeridos...",
+    });
+  }
+
+  const sql =
+    "INSERT INTO Producto (nombre, descripcion, precio, stock) VALUES (?, ?, ?, ?)";
+
+  pool.query(
+    sql,
+    [nombre, descripcion || null, precio, stock || 0],
+    (err, result) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ status: 500, message: "Error al crear producto..." });
+      }
+
+      res.status(201).json({
+        status: 201,
+        message: "Producto creado exitosamente...",
+        data: { id: result.insertId },
+      });
+    }
+  );
+});
+
 // USUARIOS
 
 router.get("/usuarios", (req, res) => {
