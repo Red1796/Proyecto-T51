@@ -1,0 +1,26 @@
+<h2>Lista de Productos</h2>
+
+<div *ngIf="errorMessage" class="error">
+  {{ errorMessage }}
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Precio</th>
+      <th>Comprar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let producto of productos">
+      <td>{{ producto.id }}</td>
+      <td>{{ producto.nombre }}</td>
+      <td>{{ producto.descripcion }}</td>
+      <td>${{ producto.precio }}</td>
+      <button>Agregar</button>
+    </tr>
+  </tbody>
+</table>
