@@ -60,9 +60,13 @@ const authMiddleware = (req, res, next) => {
 
 // Registro de usuario
 app.post("/api/register", async (req, res) => {
-  const { nombre, correo, contraseña } = req.body;
+  // Aceptar tanto 'contraseña' como 'password' desde el cliente
+  const { nombre, correo, contraseña, password } = req.body;
+  const pass = contraseña || password;
 
-  if (!nombre || !correo || !contraseña) {
+  console.log("Registro - body recibido:", req.body);
+
+  if (!nombre || !correo || !pass) {
     return res.status(400).json({
       status: 400,
       message: "nombre, correo y contraseña son requeridos...",
@@ -70,13 +74,14 @@ app.post("/api/register", async (req, res) => {
   }
 
   const saltRound = 10;
-  const passwordHash = await bcrypt.hash(contraseña, saltRound);
+  const passwordHash = await bcrypt.hash(pass, saltRound);
 
-  const sql =
-    "INSERT INTO Usuario (nombre, correo, contraseña) VALUES (?, ?, ?)";
+  // Insertar en la columna 'password' (la base de datos fue alterada previamente)
+  const sql = "INSERT INTO Usuario (nombre, correo, password) VALUES (?, ?, ?)";
 
   pool.query(sql, [nombre, correo, passwordHash], (err, results) => {
     if (err) {
+      console.error("Error al insertar usuario:", err);
       return res
         .status(500)
         .json({ status: 500, message: "Error al registrar usuario..." });
