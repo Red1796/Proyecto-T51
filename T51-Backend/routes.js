@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
   if (!nombre || !correo || !contraseña) {
     return res.status(400).json({
       status: 400,
-      message: "nombre, correo y contraseña son requeridos...",
+      message: "nombre, correo y contraseña son requeridos",
     });
   }
 
@@ -28,12 +28,12 @@ router.post("/register", async (req, res) => {
     if (err) {
       return res
         .status(500)
-        .json({ status: 500, message: "Error al registrar usuario..." });
+        .json({ status: 500, message: "Error al registrar usuario" });
     }
 
     res
       .status(201)
-      .json({ status: 201, message: "Usuario registrado exitosamente..." });
+      .json({ status: 201, message: "Usuario registrado exitosamente" });
   });
 });
 
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
   if (!userCorreo || !password) {
     return res
       .status(400)
-      .json({ status: 400, message: "correo y contraseña son requeridos..." });
+      .json({ status: 400, message: "correo y contraseña son requeridos" });
   }
 
   const sql = "SELECT * FROM Usuario WHERE correo = ?";
@@ -54,14 +54,14 @@ router.post("/login", async (req, res) => {
       console.error("Error en query:", err);
       return res
         .status(500)
-        .json({ status: 500, message: "Error en la consulta sql..." });
+        .json({ status: 500, message: "Error en la consulta sql" });
     }
 
     if (results.length === 0) {
       console.log(`Usuario no encontrado: ${userCorreo}`);
       return res
         .status(401)
-        .json({ status: 401, message: "Credenciales inválidas testing..." });
+        .json({ status: 401, message: "Credenciales inválidas" });
     }
 
     const usuario = results[0];
@@ -73,7 +73,7 @@ router.post("/login", async (req, res) => {
       console.error("No se encontró campo de contraseña");
       return res.status(500).json({
         status: 500,
-        message: "Error en la configuración del usuario...",
+        message: "Error en la configuración del usuario",
       });
     }
 
@@ -83,7 +83,7 @@ router.post("/login", async (req, res) => {
       console.log("Contraseña no coincide");
       return res
         .status(401)
-        .json({ status: 401, message: "Credenciales inválidas testing 2..." });
+        .json({ status: 401, message: "Credenciales inválidas" });
     }
 
     const token = jwt.sign(
@@ -105,7 +105,7 @@ router.get("/productos", (req, res) => {
     if (err) {
       return res
         .status(500)
-        .json({ status: 500, message: "Error al obtener productos..." });
+        .json({ status: 500, message: "Error al obtener productos" });
     }
 
     res.status(200).json({ status: 200, data: results });
@@ -118,7 +118,7 @@ router.post("/productos", authMiddleware, (req, res) => {
   if (!nombre || !precio) {
     return res.status(400).json({
       status: 400,
-      message: "nombre y precio son requeridos...",
+      message: "nombre y precio son requeridos",
     });
   }
 
@@ -128,17 +128,18 @@ router.post("/productos", authMiddleware, (req, res) => {
   pool.query(
     sql,
     [nombre, descripcion || null, precio, stock || 0],
-    (err, result) => {
+    (err, results) => {
       if (err) {
+        console.error("Error al crear producto:", err.sqlMessage);
         return res
           .status(500)
-          .json({ status: 500, message: "Error al crear producto..." });
+          .json({ status: 500, message: "Error al crear producto" });
       }
 
       res.status(201).json({
         status: 201,
-        message: "Producto creado exitosamente...",
-        data: { id: result.insertId },
+        message: "Producto creado exitosamente",
+        data: { id: results.insertId },
       });
     }
   );
@@ -151,7 +152,7 @@ router.get("/usuarios", (req, res) => {
 
   pool.query(sql, (err, results) => {
     if (err) {
-      console.error("❌ Error al obtener usuarios:", err.sqlMessage);
+      console.error("Error al obtener usuarios:", err.sqlMessage);
       return res
         .status(500)
         .json({ status: 500, message: "Error al obtener usuarios" });
@@ -174,10 +175,10 @@ router.get("/ventas", authMiddleware, (req, res) => {
 
   pool.query(sql, (err, results) => {
     if (err) {
-      console.error("❌ Error al obtener ventas:", err.sqlMessage);
+      console.error("Error al obtener ventas:", err.sqlMessage);
       return res
         .status(500)
-        .json({ status: 500, message: "Error al obtener ventas..." });
+        .json({ status: 500, message: "Error al obtener ventas" });
     }
 
     res.status(200).json({ status: 200, data: results });
@@ -191,7 +192,7 @@ router.post("/venta", authMiddleware, (req, res) => {
   if (!id_cliente || !productos || !Array.isArray(productos)) {
     return res
       .status(400)
-      .json({ status: 400, message: "Datos incompletos..." });
+      .json({ status: 400, message: "Datos incompletos" });
   }
 
   const fecha = new Date();
@@ -208,7 +209,7 @@ router.post("/venta", authMiddleware, (req, res) => {
       if (err) {
         return res
           .status(500)
-          .json({ status: 500, message: "Error al crear venta..." });
+          .json({ status: 500, message: "Error al crear venta" });
       }
 
       const id_venta = result.insertId;
@@ -226,13 +227,13 @@ router.post("/venta", authMiddleware, (req, res) => {
         if (err2) {
           return res.status(500).json({
             status: 500,
-            message: "Error al guardar detalles de venta...",
+            message: "Error al guardar detalles de venta",
           });
         }
 
         res.status(201).json({
           status: 201,
-          message: "Venta registrada exitosamente...",
+          message: "Venta registrada exitosamente",
           data: { id_venta },
         });
       });
@@ -252,7 +253,7 @@ router.get("/factura/:id", authMiddleware, (req, res) => {
     if (err || ventas.length === 0) {
       return res
         .status(404)
-        .json({ status: 404, message: "Venta no encontrada..." });
+        .json({ status: 404, message: "Venta no encontrada" });
     }
 
     const sqlDetalles =
@@ -262,7 +263,7 @@ router.get("/factura/:id", authMiddleware, (req, res) => {
       if (err2) {
         return res.status(500).json({
           status: 500,
-          message: "Error al obtener detalles de venta...",
+          message: "Error al obtener detalles de venta",
         });
       }
 

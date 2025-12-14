@@ -9,11 +9,11 @@ const pool = mysql.createPool({
 
 pool.getConnection((error, conexion) => {
   if (error) {
-    console.log("❌ Error de conexión a la base de datos...");
+    console.log("Error de conexión a la base de datos");
     console.log("Detalles del error:", error.message);
     console.log("Código:", error.code);
   } else {
-    console.log("✅ Conexión exitosa a la base de datos...");
+    console.log("Conexión exitosa a la base de datos");
     conexion.release();
   }
 });
