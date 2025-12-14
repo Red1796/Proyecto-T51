@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.JWT_SECRET || "codigo_secreto_2026";
+const SECRET_KEY = process.env.JWT_SECRET || "codigo_secreto_2025";
 
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -8,7 +8,7 @@ const authMiddleware = (req, res, next) => {
   if (!authHeader) {
     return res
       .status(401)
-      .json({ status: 401, message: "El token es obligatorio..." });
+      .json({ status: 401, message: "El token es obligatorio" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -17,7 +17,7 @@ const authMiddleware = (req, res, next) => {
     if (err) {
       return res
         .status(401)
-        .json({ status: 401, message: "Token inválido..." });
+        .json({ status: 401, message: "Token inválido" });
     }
 
     req.usuario = user;

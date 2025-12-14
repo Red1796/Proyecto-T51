@@ -1,7 +1,7 @@
 {
   "name": "veterinary-pos-system",
   "version": "1.0.0",
-  "description": "Sistema de Punto de Venta para Veterinaria - Backend",
+  "description": "Punto de Venta para Veterinaria",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

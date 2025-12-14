@@ -14,9 +14,9 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res
     .status(500)
-    .json({ status: 500, message: "Error interno del servidor..." });
+    .json({ status: 500, message: "Error interno del servidor" });
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
