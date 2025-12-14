@@ -38,10 +38,9 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { username, correo, password } = req.body;
-  const userCorreo = correo || username;
+  const { correo, contraseña } = req.body;
 
-  if (!userCorreo || !password) {
+  if (!correo || !contraseña) {
     return res
       .status(400)
       .json({ status: 400, message: "correo y contraseña son requeridos" });
@@ -49,7 +48,7 @@ router.post("/login", async (req, res) => {
 
   const sql = "SELECT * FROM Usuario WHERE correo = ?";
 
-  pool.query(sql, [userCorreo], async (err, results) => {
+  pool.query(sql, [correo], async (err, results) => {
     if (err) {
       console.error("Error en query:", err);
       return res
@@ -58,7 +57,7 @@ router.post("/login", async (req, res) => {
     }
 
     if (results.length === 0) {
-      console.log(`Usuario no encontrado: ${userCorreo}`);
+      console.log(`Usuario no encontrado: ${correo}`);
       return res
         .status(401)
         .json({ status: 401, message: "Credenciales inválidas" });
@@ -67,9 +66,7 @@ router.post("/login", async (req, res) => {
     const usuario = results[0];
     console.log("Usuario encontrado:", usuario);
 
-    const passwordField = usuario.password || usuario.contraseña;
-
-    if (!passwordField) {
+    if (!usuario.contraseña) {
       console.error("No se encontró campo de contraseña");
       return res.status(500).json({
         status: 500,
@@ -77,7 +74,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, passwordField);
+    const isMatch = await bcrypt.compare(contraseña, usuario.contraseña);
 
     if (!isMatch) {
       console.log("Contraseña no coincide");
